@@ -56,9 +56,9 @@ std::string PasswordGenerator::GenerateNewPassword()
 PasswordGenerator::PasswordGenerator(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial):
 	number(number),	isLower(isLower), isUpper(isUpper),	isDigits(isDigits),	isSpecial(isSpecial),
 	strLower("abcdefghijklmnopqrstuvwxyz"),
-    strUpper("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-    strDigits("0123456789"),
-    strSpecial("!@#$%^&*()_+-=[]{}|\\:;\"'<>,.?/")
+	strUpper("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+	strDigits("0123456789"),
+	strSpecial("!@#$%^&*()_+-=[]{}|\\:;\"'<>,.?/")
 {
 	srand(time(NULL));
 }

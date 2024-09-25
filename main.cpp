@@ -89,21 +89,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 	wndmain.cbSize = sizeof(WNDCLASSEX);					// UINT cbSize; 		// Size in bytes --> sizeof(WNDCLASSEX)
 	wndmain.style = 0;										// UINT style;			// Specifies class styles (any combination)
 	wndmain.lpfnWndProc = WndProc;							// WNDPROC lpfnWndProc;	// Pointer to window procedure
-    wndmain.cbClsExtra = 0;									// int cbClsExtra;		// Number of extra bytes to allocate following the window-class structure
-    wndmain.cbWndExtra = 0;									// int cbWndExtra;		// Number of extra bytes to allocate following the window instance
-    wndmain.hInstance = hInstance;							// HINSTANCE hInstance;	// Handle to instance that contains window procedure for class.
-    wndmain.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// HICON hIcon;			// Handle to class icon. If NULL, system provides a default icon.
-    wndmain.hCursor = LoadCursor(NULL, IDC_ARROW);			// HCURSOR hCursor;		// Handle to class cursor.
-    wndmain.hbrBackground = GetSysColorBrush(COLOR_3DFACE);	// HBRUSH hbrBackground;// Handle to class background brush (HBRUSH).
-    wndmain.lpszMenuName = NULL;							// LPCSTR lpszMenuName; // Pointer to c-string that specifies the resource name of the class menu (resource file).
-    wndmain.lpszClassName = szAppName;						// LPCSTR lpszClassName;// Pointer to c-string (specifies window class name) or atom (class atom).
+	wndmain.cbClsExtra = 0;									// int cbClsExtra;		// Number of extra bytes to allocate following the window-class structure
+	wndmain.cbWndExtra = 0;									// int cbWndExtra;		// Number of extra bytes to allocate following the window instance
+	wndmain.hInstance = hInstance;							// HINSTANCE hInstance;	// Handle to instance that contains window procedure for class.
+	wndmain.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// HICON hIcon;			// Handle to class icon. If NULL, system provides a default icon.
+	wndmain.hCursor = LoadCursor(NULL, IDC_ARROW);			// HCURSOR hCursor;		// Handle to class cursor.
+	wndmain.hbrBackground = GetSysColorBrush(COLOR_3DFACE);	// HBRUSH hbrBackground;// Handle to class background brush (HBRUSH).
+	wndmain.lpszMenuName = NULL;							// LPCSTR lpszMenuName; // Pointer to c-string that specifies the resource name of the class menu (resource file).
+	wndmain.lpszClassName = szAppName;						// LPCSTR lpszClassName;// Pointer to c-string (specifies window class name) or atom (class atom).
 	wndmain.hIconSm = NULL;									// HICON hIconSm; 		// Handle to small icon associated with window class. If NULL, using hIcon.
 
-    if (!RegisterClassEx(&wndmain))
+	if (!RegisterClassEx(&wndmain))
 	{
-        MessageBox(NULL, szErrRegClass, szAppName, MB_ICONERROR);
-        return 0;
-    }
+		MessageBox(NULL, szErrRegClass, szAppName, MB_ICONERROR);
+		return 0;
+	}
 
 	hwnd = CreateWindowEx
 	(
@@ -273,36 +273,36 @@ bool GetCheckboxState(HWND hwnd, int nIDButton)
 //=============================================================================
 void ClipboardCopy(const std::string& str)
 {
-    const char* data = str.c_str();
-    size_t size = (str.length() + 1) * sizeof(char);
-  
-    HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, size);
-    if (hMem == NULL)
-	{
-        return;
-    }  
+	const char* data = str.c_str();
+	size_t size = (str.length() + 1) * sizeof(char);
 
-    char* pMem = static_cast<char*>(GlobalLock(hMem));
-    memcpy(pMem, data, size);
-    GlobalUnlock(hMem);
-    
-    if (OpenClipboard(NULL))
+	HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, size);
+	if (hMem == NULL)
 	{
-        EmptyClipboard();
-        SetClipboardData(CF_TEXT, hMem);
-        CloseClipboard();
-    }
+		return;
+	}  
 
-    GlobalFree(hMem);
+	char* pMem = static_cast<char*>(GlobalLock(hMem));
+	memcpy(pMem, data, size);
+	GlobalUnlock(hMem);
+	
+	if (OpenClipboard(NULL))
+	{
+		EmptyClipboard();
+		SetClipboardData(CF_TEXT, hMem);
+		CloseClipboard();
+	}
+
+	GlobalFree(hMem);
 }
 
 //=============================================================================
 std::string GetEditText(HWND hEdit)
 {
-    int textLength = GetWindowTextLength(hEdit);
-    std::string text(textLength + 1, '\0');
-    GetWindowText(hEdit, const_cast<char*>(text.data()), static_cast<int>(text.size()));
-    return text;
+	int textLength = GetWindowTextLength(hEdit);
+	std::string text(textLength + 1, '\0');
+	GetWindowText(hEdit, const_cast<char*>(text.data()), static_cast<int>(text.size()));
+	return text;
 }
 
 //=============================================================================
