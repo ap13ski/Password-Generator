@@ -4,29 +4,32 @@
 #include <cmath>
 #include <string>
 
-//=============================================================================
-class PasswordGenerator 
+namespace NS_PASSWORD
 {
-private:
-	
-	int number;
-	bool isLower;
-	bool isUpper;
-	bool isDigits;
-	bool isSpecial;
+//=============================================================================
+	class PasswordGenerator 
+	{
+	private:
+		
+		int number;
+		bool isLower;
+		bool isUpper;
+		bool isDigits;
+		bool isSpecial;
 
-    std::string strLower;
-    std::string strUpper;
-    std::string strDigits;
-    std::string strSpecial;
-	
-	std::string GetSequence(bool isLower, bool isUpper, bool isDigits, bool isSpecial);	
-	
-public:
+		std::string strLower;
+		std::string strUpper;
+		std::string strDigits;
+		std::string strSpecial;
+		
+		std::string GetSequence(bool isLower, bool isUpper, bool isDigits, bool isSpecial);	
+		
+	public:
 
-	std::string GenerateNewPassword(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial);	
-	std::string GenerateNewPassword();	
-	PasswordGenerator(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial);
-};
+		std::string GenerateNewPassword(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial);	
+		std::string GenerateNewPassword();	
+		PasswordGenerator(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial);
+	};
 
 //=============================================================================
+}
