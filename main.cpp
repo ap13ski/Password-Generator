@@ -16,6 +16,7 @@
 #define ID_TEXTBOX_PASSWORD			1008
 #define ID_BUTTON_COPY				1009
 #define ID_BUTTON_GENERATE			1010
+#define ID_BUTTON_INFO				1011
 
 #define DEFAULT_NUMBER		12
 #define RANGE_MIN 			5
@@ -35,6 +36,7 @@ HWND ctlCheckboxSpecial;
 HWND ctlTextboxPassword;
 HWND ctlButtonCopy;
 HWND ctlButtonGenerate;
+HWND ctlButtonInfo;
 
 HFONT hFont;
 HFONT hFontMono;
@@ -50,6 +52,7 @@ NS_PASSWORD::PasswordGenerator pGenerator(number, isCheckboxLower, isCheckboxUpp
 
 bool isTracking = false;
 
+/*
 int tabOrder[] = {
 	ID_TRACKBAR_NUMBER,		// 0
 	ID_CHECKBOX_LOWER,		// 1
@@ -58,10 +61,12 @@ int tabOrder[] = {
 	ID_CHECKBOX_SPECIAL,	// 4
 	ID_TEXTBOX_PASSWORD,	// 5
 	ID_BUTTON_GENERATE,		// 6
-	ID_BUTTON_COPY			// 7
+	ID_BUTTON_COPY,			// 7
+	ID_BUTTON_INFO			// 8
 };
 
 int currentFocus = 0;
+*/
 
 //=============================================================================
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -79,10 +84,12 @@ bool ClipboardCopy(const std::string& str);
 std::string Generate(int number, bool isCheckboxLower, bool isCheckboxUpper, bool isCheckboxDigits, bool isCheckboxSpecial);
 std::string GetEditText(HWND hEdit);
 
+void ShowInfo();
+
 //=============================================================================
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nCmdShow)
 {
-	const char szAppName[] = TEXT("WinAPI Password Generator");
+	const char szAppName[] = TEXT("Password Generator");
 	const char szErrRegClass[] = TEXT("Error while registering a class instance.\nApplication will be terminated.");
 	HWND hwnd;
 	MSG msg;
@@ -134,9 +141,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 //=============================================================================
 void CreateControls(HWND hwnd)
 {
+	
 	CreateFontCustom(hFont, "Tahoma", 0);			//TODO: Interface scaling
 	CreateFontCustom(hFontMono, "Courier New", 0);	//TODO: Interface scaling
-
+	
 	INITCOMMONCONTROLSEX initCCEx;
 	InitCommonControlsEx(&initCCEx); 	
 	
@@ -220,11 +228,25 @@ void CreateControls(HWND hwnd)
 		0,											// extended window style
 		"BUTTON",									// predefined class 
 		"Generate",									// button text 
-		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON ,	// styles 
+		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP ,	// styles 
 		250, 225,									// X, Y positions of window 
 		91, 28,									// width, height of window
 		hwnd,										// parent window 
 		(HMENU)ID_BUTTON_GENERATE,					// menu handle or child identifier 
+		(HINSTANCE) GetWindowLong(hwnd, GWL_HINSTANCE), // handle to application instance
+		NULL // pointer not needed 
+	); 
+
+	ctlButtonInfo = CreateWindowEx
+	(
+		0,											// extended window style
+		"BUTTON",									// predefined class 
+		"Info",									// button text 
+		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP ,	// styles 
+		10, 225,									// X, Y positions of window 
+		91, 28,									// width, height of window
+		hwnd,										// parent window 
+		(HMENU)ID_BUTTON_INFO,					// menu handle or child identifier 
 		(HINSTANCE) GetWindowLong(hwnd, GWL_HINSTANCE), // handle to application instance
 		NULL // pointer not needed 
 	); 
@@ -235,7 +257,7 @@ void CreateControls(HWND hwnd)
 	//TODO: Interface scaling
 	//UpdateFonts();
 	
-	//SetFocus(ctlButtonGenerate);
+	SetFocus(ctlButtonGenerate);
 }
 
 //=============================================================================
@@ -344,12 +366,30 @@ void ChangeFocusByTabIncrease()
 	SetWindowText(ctlTextboxPassword, buffer);
 	*/
 
+	/*
 	SetFocus(GetDlgItem(GetActiveWindow(), tabOrder[currentFocus]));
 	
-	if (currentFocus == 7)
+	if (currentFocus == 8)
 		currentFocus = 0;
 	else
-		currentFocus++;		
+		currentFocus++;	
+	*/
+}
+
+void ShowInfo()
+{
+	std::string info;
+	
+	info += "Password Generator v.1.0\n\n\n";
+	info += "Created by ap13ski\n";
+	info += "https://github.com/ap13ski\n";
+	info += "ap13ski@gmail.com\n\n";
+	
+	info += "Compiled with MSVC++ 6.0, x86 v.12.00.8168.\n\n";
+	
+	//info += "Praise the Machine God.\n";
+	
+	MessageBox(NULL, info.c_str(), "Information", MB_OK | MB_ICONINFORMATION);	
 }
 
 //=============================================================================
@@ -401,6 +441,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 					case ID_BUTTON_GENERATE:
 						UpdateTextboxPassword();
+						break;
+
+					case ID_BUTTON_INFO:
+						ShowInfo();
 						break;	
 					
 					case ID_CHECKBOX_LOWER:
