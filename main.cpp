@@ -1,10 +1,7 @@
-#include <windows.h>
-#include <commctrl.h>
-#include <string>
-#include "password.h"
-#include "clipboard.h"
+#include "main.h"
 
-#pragma comment(lib, "comctl32.lib")
+
+//=============================================================================
 
 #define ID_TRACKBAR_NUMBER			1001
 #define ID_LABEL_NUMBER				1002
@@ -18,116 +15,69 @@
 #define ID_BUTTON_GENERATE			1010
 #define ID_BUTTON_INFO				1011
 
-#define DEFAULT_NUMBER		12
 #define RANGE_MIN 			5
 #define RANGE_MAX 			30
 #define DEFAULT_TICFREQ 	1
 #define DEFAULT_PAGESIZE 	1
 
 //=============================================================================
-HWND ctlGroupboxSettings;
-HWND ctlTrackBarNumber;
-HWND ctlLabelNumber;
-HWND ctlLabelSymbols;
-HWND ctlCheckboxLower;
-HWND ctlCheckboxUpper;
-HWND ctlCheckboxDigits;
-HWND ctlCheckboxSpecial;
-HWND ctlTextboxPassword;
-HWND ctlButtonCopy;
-HWND ctlButtonGenerate;
-HWND ctlButtonInfo;
+const char* FONT_NORMAL = "Tahoma";
+const char* FONT_MONO = "Courier New";
 
-HFONT hFont;
-HFONT hFontMono;
+const char* STR_APP_NAME = "Password Generator";
+const char* STR_APP_ABOUT = "About - Password Generator";
 
-NS_CLIPBOARD::Clipboard clipboard;
+const char* STR_ERROR_REG_CLASS = "Error while registering a class instance.\nApplication will be terminated.";
 
-int number = DEFAULT_NUMBER;
-bool isCheckboxLower = true;
-bool isCheckboxUpper = true;
-bool isCheckboxDigits = true;
-bool isCheckboxSpecial = true;
-NS_PASSWORD::PasswordGenerator pGenerator(number, isCheckboxLower, isCheckboxUpper, isCheckboxDigits, isCheckboxSpecial);
+const char* STR_EMPTY = "";
 
-bool isTracking = false;
+const char* STR_GROUPBOX_SETTINGS = "Settings";
+const char* STR_LABEL_SYMBOLS = "Characters included:";
+const char* STR_CHECKBOX_LOWER = "a-z";
+const char* STR_CHECKBOX_UPPER = "A-Z";
+const char* STR_CHECKBOX_DIGITS = "0-9";
+const char* STR_CHECKBOX_SPECIAL = "@#$";
 
-/*
-int tabOrder[] = {
-	ID_TRACKBAR_NUMBER,		// 0
-	ID_CHECKBOX_LOWER,		// 1
-	ID_CHECKBOX_UPPER,		// 2
-	ID_CHECKBOX_DIGITS,		// 3
-	ID_CHECKBOX_SPECIAL,	// 4
-	ID_TEXTBOX_PASSWORD,	// 5
-	ID_BUTTON_GENERATE,		// 6
-	ID_BUTTON_COPY,			// 7
-	ID_BUTTON_INFO			// 8
-};
+const char* STR_BUTTON_COPY = "Copy";
+const char* STR_BUTTON_GENERATE = "Generate";
+const char* STR_BUTTON_INFO = "Info";
 
-int currentFocus = 0;
-*/
+const char* STR_APP_ABOUT_TEXT = 	"Password Generator v.1.0 64-bit\n\n\n"
+									"Created by ap13ski\n"
+									"https://github.com/ap13ski\n"
+									"ap13ski@gmail.com\n\n"	
+									"Compiled with MinGW-W64 v.8.1.0 64-bit\n"
+									"https://sourceforge.net/projects/mingw/\n\n"	
+									"Packed with UPX 4.2.4 64-bit\n"
+									"https://upx.github.io/\n";
 
 //=============================================================================
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-void CreateFontCustom(HFONT& hFont, LPCTSTR fontFamily, int fontSize);
-void CreateControls(HWND hwnd);
-void UpdateNumber();
-void UpdateLabelNumber();
-void UpdateFont(HWND& hCtrl, HFONT& hFont);
-void UpdateFonts();
-void UpdateTextboxPassword();
-
-void ChangeFocusByTabIncrease();
-bool GetCheckboxState(HWND hwnd, int nIDButton);
-bool ClipboardCopy(const std::string& str);
-std::string Generate(int number, bool isCheckboxLower, bool isCheckboxUpper, bool isCheckboxDigits, bool isCheckboxSpecial);
-std::string GetEditText(HWND hEdit);
-
-void ShowInfo();
-
-//=============================================================================
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nCmdShow)
-{
-	const char szAppName[] = TEXT("Password Generator");
-	const char szErrRegClass[] = TEXT("Error while registering a class instance.\nApplication will be terminated.");
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{	
 	HWND hwnd;
 	MSG msg;
 
-	WNDCLASSEX wndmain; // = {0};				
-	wndmain.cbSize = sizeof(WNDCLASSEX);					// UINT cbSize; 		// Size in bytes --> sizeof(WNDCLASSEX)
-	wndmain.style = 0;										// UINT style;			// Specifies class styles (any combination)
-	wndmain.lpfnWndProc = WndProc;							// WNDPROC lpfnWndProc;	// Pointer to window procedure
-    wndmain.cbClsExtra = 0;									// int cbClsExtra;		// Number of extra bytes to allocate following the window-class structure
-    wndmain.cbWndExtra = 0;									// int cbWndExtra;		// Number of extra bytes to allocate following the window instance
-    wndmain.hInstance = hInstance;							// HINSTANCE hInstance;	// Handle to instance that contains window procedure for class.
-    wndmain.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// HICON hIcon;			// Handle to class icon. If NULL, system provides a default icon.
-    wndmain.hCursor = LoadCursor(NULL, IDC_ARROW);			// HCURSOR hCursor;		// Handle to class cursor.
-    wndmain.hbrBackground = GetSysColorBrush(COLOR_3DFACE);	// HBRUSH hbrBackground;// Handle to class background brush (HBRUSH).
-    wndmain.lpszMenuName = NULL;							// LPCSTR lpszMenuName; // Pointer to c-string that specifies the resource name of the class menu (resource file).
-    wndmain.lpszClassName = szAppName;						// LPCSTR lpszClassName;// Pointer to c-string (specifies window class name) or atom (class atom).
-	wndmain.hIconSm = NULL;									// HICON hIconSm; 		// Handle to small icon associated with window class. If NULL, using hIcon.
+	WNDCLASSEX wndmain;
+	wndmain.cbSize = sizeof(WNDCLASSEX);
+	wndmain.style = 0;
+	wndmain.lpfnWndProc = WndProc;
+    wndmain.cbClsExtra = 0;
+    wndmain.cbWndExtra = 0;
+    wndmain.hInstance = hInstance;
+    wndmain.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
+    wndmain.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wndmain.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
+    wndmain.lpszMenuName = NULL;
+    wndmain.lpszClassName = STR_APP_NAME;
+	wndmain.hIconSm = NULL;
 
     if (!RegisterClassEx(&wndmain))
 	{
-        MessageBox(NULL, szErrRegClass, szAppName, MB_ICONERROR);
-        return 0;
+		MessageBox(NULL, STR_ERROR_REG_CLASS, STR_APP_NAME, MB_ICONERROR);
+		return 0;
     }
 
-	hwnd = CreateWindowEx
-	(
-		0,									// DWORD dwExStyle			// extended window style
-		wndmain.lpszClassName,				// LPCSTR lpClassName		// registered class name
-		szAppName,							// LPCSTR lpWindowName		// window name
-		WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME | WS_VISIBLE,	// DWORD dwStyle			// window style
-		CW_USEDEFAULT, CW_USEDEFAULT,		// int X, int Y				// X, Y positions of window
-		359, 293,							// int nWidth, int nHeight	// width, height of window
-		0,									// HWND hWndParent			// handle to parent or owner window
-		NULL,								// HMENU hMenu				// menu handle or child identifier
-		hInstance,							// HINSTANCE hInstance		// handle to application instance
-		NULL								// LPVOID lpParam			// window-creation data
-	);	
-
+	hwnd = CreateWindowEx(0, wndmain.lpszClassName, STR_APP_NAME, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 380, 300, 0, NULL, hInstance, NULL);	
 
 	while (GetMessage(&msg, NULL, 0, 0)) 
 	{
@@ -140,122 +90,49 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 
 //=============================================================================
 void CreateControls(HWND hwnd)
-{
-	
-	CreateFontCustom(hFont, "Tahoma", 0);			//TODO: Interface scaling
-	CreateFontCustom(hFontMono, "Courier New", 0);	//TODO: Interface scaling
-	
+{	
 	INITCOMMONCONTROLSEX initCCEx;
 	InitCommonControlsEx(&initCCEx); 	
 	
-	ctlGroupboxSettings = CreateWindowEx(0, TEXT("BUTTON"), TEXT("Settings"), WS_CHILD | WS_VISIBLE | BS_GROUPBOX,10,10,331,170, hwnd, (HMENU)0, NULL, NULL);
+	ctlGroupboxSettings = CreateWindowEx(0, TEXT("BUTTON"), STR_GROUPBOX_SETTINGS, WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 10, 10, 350, 170, hwnd, (HMENU)0, NULL, NULL);
 
-	ctlLabelNumber = CreateWindowEx
-	(
-		0,						// DWORD dwExStyle			// extended window style
-		TEXT("Static"),			// LPCSTR lpClassName		// registered class name
-		TEXT("0"),				// LPCSTR lpWindowName		// window name
-		WS_CHILD | WS_VISIBLE,	// DWORD dwStyle			// window style
-		19, 40,					// int X, int Y				// X, Y positions of window
-		250, 16,				// int nWidth, int nHeight	// width, height of window
-		hwnd,					// HWND hWndParent			// handle to parent or owner window
-		(HMENU)ID_LABEL_NUMBER,	// HMENU hMenu				// menu handle or child identifier
-		0,						// HINSTANCE hInstance		// handle to application instance
-		NULL					// LPVOID lpParam			// window-creation data
-	);
+	ctlLabelNumber = CreateWindowEx	(0, TEXT("Static"), STR_EMPTY, WS_CHILD | WS_VISIBLE, 20, 40, 250, 16, hwnd, (HMENU)ID_LABEL_NUMBER, 0,	NULL);
 	
-	ctlTrackBarNumber = CreateWindowEx
-	(
-		0,										// DWORD dwExStyle			// extended window style
-		TRACKBAR_CLASS,							// LPCSTR lpClassName		// registered class name
-		TEXT("WinAPI Password Generator"),		// LPCSTR lpWindowName		// window name
-		WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | WS_TABSTOP,	// DWORD dwStyle			// window style
-		12, 62,									// int X, int Y				// X, Y positions of window
-		327, 40,								// int nWidth, int nHeight	// width, height of window
-		hwnd,									// HWND hWndParent			// handle to parent or owner window
-		(HMENU)ID_TRACKBAR_NUMBER,				// HMENU hMenu				// menu handle or child identifier
-		0,										// HINSTANCE hInstance		// handle to application instance
-		NULL									// LPVOID lpParam			// window-creation data
-	);
+	ctlTrackBarNumber = CreateWindowEx(0, TRACKBAR_CLASS, STR_EMPTY, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | WS_TABSTOP, 12, 60, 346, 40, hwnd, (HMENU)ID_TRACKBAR_NUMBER, 0, NULL);
 
 	SendMessage(ctlTrackBarNumber, TBM_SETRANGE,  TRUE, MAKELONG(RANGE_MIN, RANGE_MAX)); 
 	SendMessage(ctlTrackBarNumber, TBM_SETTICFREQ, DEFAULT_TICFREQ, 0); 
 	SendMessage(ctlTrackBarNumber, TBM_SETPAGESIZE, 0,  DEFAULT_PAGESIZE); 
 	SendMessage(ctlTrackBarNumber, TBM_SETPOS, TRUE, number); 
 
-	ctlLabelSymbols = CreateWindowEx
-	(
-		0,						// DWORD dwExStyle			// extended window style
-		TEXT("Static"),			// LPCSTR lpClassName		// registered class name
-		TEXT("Characters included:"),	// LPCSTR lpWindowName		// window name
-		WS_CHILD | WS_VISIBLE,	// DWORD dwStyle			// window style
-		19, 113,				// int X, int Y				// X, Y positions of window
-		250, 16,				// int nWidth, int nHeight	// width, height of window
-		hwnd,					// HWND hWndParent			// handle to parent or owner window
-		(HMENU)ID_LABEL_SYMBOLS,// HMENU hMenu				// menu handle or child identifier
-		0,						// HINSTANCE hInstance		// handle to application instance
-		NULL					// LPVOID lpParam			// window-creation data
-	);
+	ctlLabelSymbols = CreateWindowEx(0, TEXT("Static"), STR_LABEL_SYMBOLS, WS_CHILD | WS_VISIBLE, 20, 119, 250, 16, hwnd, (HMENU)ID_LABEL_SYMBOLS, 0, NULL);
 
-	ctlCheckboxLower = CreateWindowEx(0, TEXT("BUTTON"), TEXT("a-z"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 20, 136, 55, 30, hwnd, (HMENU)ID_CHECKBOX_LOWER, NULL, NULL);
-	ctlCheckboxUpper = CreateWindowEx(0, TEXT("BUTTON"), TEXT("A-Z"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 90, 136, 55, 30, hwnd, (HMENU)ID_CHECKBOX_UPPER, NULL, NULL);
-	ctlCheckboxDigits = CreateWindowEx(0, TEXT("BUTTON"), TEXT("0-9"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 160, 136, 55, 30, hwnd, (HMENU)ID_CHECKBOX_DIGITS, NULL, NULL);
-	ctlCheckboxSpecial = CreateWindowEx(0, TEXT("BUTTON"), TEXT("@#$"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 230, 136, 60, 30, hwnd, (HMENU)ID_CHECKBOX_SPECIAL, NULL, NULL);
+	ctlCheckboxLower = CreateWindowEx(0, TEXT("BUTTON"), TEXT("a-z"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 20, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_LOWER, NULL, NULL);
+	ctlCheckboxUpper = CreateWindowEx(0, TEXT("BUTTON"), TEXT("A-Z"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 110, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_UPPER, NULL, NULL);
+	ctlCheckboxDigits = CreateWindowEx(0, TEXT("BUTTON"), TEXT("0-9"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 200, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_DIGITS, NULL, NULL);
+	ctlCheckboxSpecial = CreateWindowEx(0, TEXT("BUTTON"), TEXT("@#$"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 290, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_SPECIAL, NULL, NULL);
 	
 	SendMessage(ctlCheckboxLower, BM_SETCHECK, TRUE, 0); 
 	SendMessage(ctlCheckboxUpper, BM_SETCHECK, TRUE, 0); 
 	SendMessage(ctlCheckboxDigits, BM_SETCHECK, TRUE, 0); 
 	SendMessage(ctlCheckboxSpecial, BM_SETCHECK, TRUE, 0); 
 
-	ctlTextboxPassword = CreateWindowEx(WS_EX_CLIENTEDGE | WS_EX_RIGHT, TEXT("EDIT"), TEXT("0"), WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 10, 190, 331, 25, hwnd, (HMENU)ID_TEXTBOX_PASSWORD, NULL, NULL);
+	ctlTextboxPassword = CreateWindowEx(WS_EX_CLIENTEDGE | WS_EX_RIGHT, TEXT("EDIT"), STR_EMPTY, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 10, 190, 350, 30, hwnd, (HMENU)ID_TEXTBOX_PASSWORD, NULL, NULL);
 
-	ctlButtonCopy = CreateWindowEx
-	(
-		0,											// extended window style
-		"BUTTON",									// predefined class 
-		"Copy",										// button text 
-		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP,	// styles 
-		150, 225,									// X, Y positions of window 
-		91, 28,										// width, height of window
-		hwnd,										// parent window 
-		(HMENU)ID_BUTTON_COPY,						// menu handle or child identifier 
-		(HINSTANCE) GetWindowLong(hwnd, GWL_HINSTANCE), // handle to application instance
-		NULL // pointer not needed 
-	);     
+	ctlButtonCopy = CreateWindowEx(0, "BUTTON", STR_BUTTON_COPY, WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 130, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_COPY, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);     
 
-	ctlButtonGenerate = CreateWindowEx
-	(
-		0,											// extended window style
-		"BUTTON",									// predefined class 
-		"Generate",									// button text 
-		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP ,	// styles 
-		250, 225,									// X, Y positions of window 
-		91, 28,									// width, height of window
-		hwnd,										// parent window 
-		(HMENU)ID_BUTTON_GENERATE,					// menu handle or child identifier 
-		(HINSTANCE) GetWindowLong(hwnd, GWL_HINSTANCE), // handle to application instance
-		NULL // pointer not needed 
-	); 
+	ctlButtonGenerate = CreateWindowEx(0, "BUTTON", STR_BUTTON_GENERATE, WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 250, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_GENERATE, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL); 
 
-	ctlButtonInfo = CreateWindowEx
-	(
-		0,											// extended window style
-		"BUTTON",									// predefined class 
-		"Info",									// button text 
-		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP ,	// styles 
-		10, 225,									// X, Y positions of window 
-		91, 28,									// width, height of window
-		hwnd,										// parent window 
-		(HMENU)ID_BUTTON_INFO,					// menu handle or child identifier 
-		(HINSTANCE) GetWindowLong(hwnd, GWL_HINSTANCE), // handle to application instance
-		NULL // pointer not needed 
-	); 
+	ctlButtonInfo = CreateWindowEx(0, "BUTTON", STR_BUTTON_INFO, WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 10, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_INFO, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL); 
 	
 	UpdateLabelNumber();
 	UpdateTextboxPassword();
 
-	//TODO: Interface scaling
-	//UpdateFonts();
+	CreateFontCustom(hFontNormal, FW_NORMAL, FONT_NORMAL);
+	CreateFontCustom(hFontBold, FW_BOLD, FONT_NORMAL);
+	CreateFontCustom(hFontMono, FW_NORMAL, FONT_MONO);
+	
+	UpdateFonts();		
 	
 	SetFocus(ctlButtonGenerate);
 }
@@ -269,7 +146,7 @@ void UpdateNumber()
 //=============================================================================
 void UpdateLabelNumber() 
 {
-	TCHAR buffer[30]; 
+	char buffer[30]; 
 	wsprintf(buffer, TEXT("Characters count: %ld"), number);
 	SetWindowText(ctlLabelNumber, buffer);	
 }
@@ -289,9 +166,9 @@ void UpdateTextboxPassword()
 }
 
 //=============================================================================
-bool GetCheckboxState(HWND hwnd, int nIDButton)
+bool GetCheckboxState(HWND hwnd, int buttonID)
 {
-	return (IsDlgButtonChecked(hwnd, nIDButton) == BST_CHECKED);
+	return (IsDlgButtonChecked(hwnd, buttonID) == BST_CHECKED);
 }
 
 //=============================================================================
@@ -306,22 +183,48 @@ bool ClipboardCopy(const std::string& str)
 //=============================================================================
 std::string GetEditText(HWND hEdit)
 {
-    int textLength = GetWindowTextLength(hEdit);
-    std::string text(textLength + 1, '\0');
-    GetWindowText(hEdit, const_cast<char*>(text.data()), static_cast<int>(text.size()));
+    int length = GetWindowTextLength(hEdit);
+    if (length <= 0) { return ""; }
+
+    std::string text(length, '\0');
+    GetWindowText(hEdit, &text[0], length + 1);
+
     return text;
 }
 
-//=============================================================================
-void CreateFontCustom(HFONT& hFont, LPCTSTR fontFamily, int fontSize)
+//===================================================
+void UpdateFonts()
+{	
+	UpdateFont(ctlGroupboxSettings, hFontBold);
+	UpdateFont(ctlTrackBarNumber, hFontNormal);
+	UpdateFont(ctlLabelNumber, hFontNormal);
+	UpdateFont(ctlLabelSymbols, hFontNormal);
+	UpdateFont(ctlCheckboxLower, hFontNormal);
+	UpdateFont(ctlCheckboxUpper, hFontNormal);
+	UpdateFont(ctlCheckboxDigits, hFontNormal);
+	UpdateFont(ctlCheckboxSpecial, hFontNormal);
+	UpdateFont(ctlTextboxPassword, hFontNormal);
+	UpdateFont(ctlButtonCopy, hFontNormal);
+	UpdateFont(ctlButtonGenerate, hFontBold);
+	UpdateFont(ctlButtonInfo, hFontNormal);	
+}
+
+//===================================================
+void UpdateFont(HWND& hControl, HFONT& hFont)
 {
-	hFont = CreateFont
+	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);	
+}
+
+//===================================================
+void CreateFontCustom(HFONT& hFontCustom, int fnWeight, LPCTSTR lpszFace)
+{
+	hFontCustom = CreateFont
 	(
-		fontSize, 					// int nHeight               // height of font
+		0, 							// int nHeight               // height of font
 		0, 							// int nWidth                // average character width
 		0, 							// int nEscapement           // angle of escapement
 		0, 							// int nOrientation          // base-line orientation angle
-		FW_NORMAL, 					// int fnWeight              // font weight
+		fnWeight, 					// int fnWeight              // font weight
 		FALSE, 						// DWORD fdwItalic           // italic attribute option
 		FALSE, 						// DWORD fdwUnderline        // underline attribute option
 		FALSE, 						// DWORD fdwStrikeOut        // strikeout attribute option
@@ -330,66 +233,14 @@ void CreateFontCustom(HFONT& hFont, LPCTSTR fontFamily, int fontSize)
 		CLIP_DEFAULT_PRECIS, 		// DWORD fdwClipPrecision    // clipping precision
 		DEFAULT_QUALITY, 			// DWORD fdwQuality          // output quality
 		DEFAULT_PITCH | FF_SWISS, 	// DWORD fdwPitchAndFamily   // pitch and family
-		fontFamily			 		// LPCTSTR lpszFace          // typeface name ex. "Tahoma"
+		lpszFace			 		// LPCTSTR lpszFace          // typeface name
 	);
 }
 
 //=============================================================================
-void UpdateFont(HWND& hCtrl, HFONT& hFont)
-{
-	SendMessage(hCtrl, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
-	InvalidateRect(hCtrl, NULL, TRUE);
-}
-
-//=============================================================================
-void UpdateFonts()
-{
-	UpdateFont(ctlGroupboxSettings, hFont);
-	UpdateFont(ctlTrackBarNumber, hFont);
-	UpdateFont(ctlLabelNumber, hFont);
-	UpdateFont(ctlLabelSymbols, hFont);
-	UpdateFont(ctlCheckboxLower, hFont);
-	UpdateFont(ctlCheckboxUpper, hFont);
-	UpdateFont(ctlCheckboxDigits, hFont);
-	UpdateFont(ctlCheckboxSpecial, hFont);
-	UpdateFont(ctlTextboxPassword, hFontMono);
-	UpdateFont(ctlButtonCopy, hFont);
-	UpdateFont(ctlButtonGenerate, hFont);
-}
-
-//=============================================================================
-void ChangeFocusByTabIncrease()
-{	
-	/*	
-	TCHAR buffer[30]; 
-	wsprintf(buffer, TEXT("%ld"), currentFocus);
-	SetWindowText(ctlTextboxPassword, buffer);
-	*/
-
-	/*
-	SetFocus(GetDlgItem(GetActiveWindow(), tabOrder[currentFocus]));
-	
-	if (currentFocus == 8)
-		currentFocus = 0;
-	else
-		currentFocus++;	
-	*/
-}
-
 void ShowInfo()
 {
-	std::string info;
-	
-	info += "Password Generator v.1.0\n\n\n";
-	info += "Created by ap13ski\n";
-	info += "https://github.com/ap13ski\n";
-	info += "ap13ski@gmail.com\n\n";
-	
-	info += "Compiled with MSVC++ 6.0, x86 v.12.00.8168.\n\n";
-	
-	//info += "Praise the Machine God.\n";
-	
-	MessageBox(NULL, info.c_str(), "Information", MB_OK | MB_ICONINFORMATION);	
+	MessageBox(NULL, STR_APP_ABOUT_TEXT, STR_APP_ABOUT, MB_OK | MB_ICONINFORMATION);	
 }
 
 //=============================================================================
@@ -406,7 +257,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			if (wParam == VK_TAB)
 			{ 
 				//TODO: TabIndex
-				//ChangeFocusByTabIncrease();
 			}
 			break;
 

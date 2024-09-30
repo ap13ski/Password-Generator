@@ -1,7 +1,8 @@
 #include "password.h"
 
+
 namespace NS_PASSWORD
-{
+{	
 //=============================================================================
 std::string PasswordGenerator::GetSequence(bool isLower, bool isUpper, bool isDigits, bool isSpecial)
 {
@@ -66,5 +67,4 @@ PasswordGenerator::PasswordGenerator(int number, bool isLower, bool isUpper, boo
 }
 
 //=============================================================================
-
 }
