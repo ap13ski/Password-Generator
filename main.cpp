@@ -11,8 +11,8 @@
 #define ID_CHECKBOX_DIGITS			1006
 #define ID_CHECKBOX_SPECIAL			1007
 #define ID_TEXTBOX_PASSWORD			1008
-#define ID_BUTTON_COPY				1009
-#define ID_BUTTON_GENERATE			1010
+#define ID_BUTTON_GENERATE			1009
+#define ID_BUTTON_COPY				1010
 #define ID_BUTTON_INFO				1011
 
 #define RANGE_MIN 			5
@@ -21,41 +21,22 @@
 #define DEFAULT_PAGESIZE 	1
 
 //=============================================================================
+
 const char* FONT_NORMAL = "Tahoma";
 const char* FONT_MONO = "Courier New";
 
-const char* STR_APP_NAME = "Password Generator";
-const char* STR_APP_ABOUT = "About - Password Generator";
-
-const char* STR_ERROR_REG_CLASS = "Error while registering a class instance.\nApplication will be terminated.";
-
-const char* STR_EMPTY = "";
-
-const char* STR_GROUPBOX_SETTINGS = "Settings";
-const char* STR_LABEL_SYMBOLS = "Characters included:";
-const char* STR_CHECKBOX_LOWER = "a-z";
-const char* STR_CHECKBOX_UPPER = "A-Z";
-const char* STR_CHECKBOX_DIGITS = "0-9";
-const char* STR_CHECKBOX_SPECIAL = "@#$";
-
-const char* STR_BUTTON_COPY = "Copy";
-const char* STR_BUTTON_GENERATE = "Generate";
-const char* STR_BUTTON_INFO = "Info";
-
-const char* STR_APP_ABOUT_TEXT = 	"Password Generator v.1.0 64-bit\n\n\n"
-									"Created by ap13ski\n"
-									"https://github.com/ap13ski\n"
-									"ap13ski@gmail.com\n\n"	
-									"Compiled with MinGW-W64 v.8.1.0 64-bit\n"
-									"https://sourceforge.net/projects/mingw/\n\n"	
-									"Packed with UPX 4.2.4 64-bit\n"
-									"https://upx.github.io/\n";
+std::string STR_APP_ABOUT = LoadStrFromResource(hInst, IDS_STR_APP_ABOUT);
+std::string STR_APP_ABOUT_TEXT = LoadStrFromResource(hInst, IDS_STR_APP_ABOUT_TEXT);
 
 //=============================================================================
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {	
+	hInst = hInstance;
 	HWND hwnd;
 	MSG msg;
+	
+	std::string STR_APP_NAME = LoadStrFromResource(hInst, IDS_STR_APP_NAME);
+	std::string STR_ERROR_REG_CLASS = LoadStrFromResource(hInst, IDS_STR_ERROR_REG_CLASS);
 
 	WNDCLASSEX wndmain;
 	wndmain.cbSize = sizeof(WNDCLASSEX);
@@ -68,19 +49,36 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     wndmain.hCursor = LoadCursor(NULL, IDC_ARROW);
     wndmain.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
     wndmain.lpszMenuName = NULL;
-    wndmain.lpszClassName = STR_APP_NAME;
+    wndmain.lpszClassName = STR_APP_NAME.c_str();
 	wndmain.hIconSm = NULL;
 
     if (!RegisterClassEx(&wndmain))
 	{
-		MessageBox(NULL, STR_ERROR_REG_CLASS, STR_APP_NAME, MB_ICONERROR);
+		MessageBox(NULL, STR_ERROR_REG_CLASS.c_str(), STR_APP_NAME.c_str(), MB_ICONERROR);
 		return 0;
     }
 
-	hwnd = CreateWindowEx(0, wndmain.lpszClassName, STR_APP_NAME, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 380, 300, 0, NULL, hInstance, NULL);	
+	hwnd = CreateWindowEx(0, wndmain.lpszClassName, STR_APP_NAME.c_str(), WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 380, 300, 0, NULL, hInstance, NULL);	
 
 	while (GetMessage(&msg, NULL, 0, 0)) 
 	{
+		// TAB and SHIFT+TAB handler
+		//==========================
+		if (msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN)
+		{
+			if (msg.wParam == VK_TAB)
+			{
+				BOOL isDirBackward = GetAsyncKeyState(VK_SHIFT) & 0x8000;
+				
+				HWND itemNext = GetNextDlgTabItem(hwnd, GetFocus(), isDirBackward);
+				if (IsWindow(itemNext))
+				{
+					SetFocus(itemNext);
+				}
+			}
+		}
+		//==========================
+
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
@@ -89,41 +87,68 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 //=============================================================================
-void CreateControls(HWND hwnd)
-{	
-	INITCOMMONCONTROLSEX initCCEx;
-	InitCommonControlsEx(&initCCEx); 	
+std::string LoadStrFromResource(HINSTANCE hInstance, int strID)
+{
+	char buffer[BUFFER_STR];
+	LoadString(hInstance, strID, buffer, sizeof(buffer) / sizeof(char));
 	
-	ctlGroupboxSettings = CreateWindowEx(0, TEXT("BUTTON"), STR_GROUPBOX_SETTINGS, WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 10, 10, 350, 170, hwnd, (HMENU)0, NULL, NULL);
+	std::string result = buffer;	
+	return result;
+}
 
-	ctlLabelNumber = CreateWindowEx	(0, TEXT("Static"), STR_EMPTY, WS_CHILD | WS_VISIBLE, 20, 40, 250, 16, hwnd, (HMENU)ID_LABEL_NUMBER, 0,	NULL);
+//=============================================================================
+void CreateControls(HWND hwnd)
+{
+	INITCOMMONCONTROLSEX initCCEx;
+	InitCommonControlsEx(&initCCEx);
 	
-	ctlTrackBarNumber = CreateWindowEx(0, TRACKBAR_CLASS, STR_EMPTY, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | WS_TABSTOP, 12, 60, 346, 40, hwnd, (HMENU)ID_TRACKBAR_NUMBER, 0, NULL);
+	const char* TEXT_CLASS_BUTTON = "BUTTON";
+	const char* TEXT_CLASS_LABEL = "STATIC";
+	const char* TEXT_CLASS_EDIT = "EDIT";
+	
+	std::string STR_EMPTY = LoadStrFromResource(hInst, IDS_STR_EMPTY);
+
+	std::string STR_GROUPBOX_SETTINGS = LoadStrFromResource(hInst, IDS_STR_GROUPBOX_SETTINGS);
+	std::string STR_LABEL_SYMBOLS = LoadStrFromResource(hInst, IDS_STR_LABEL_SYMBOLS);
+	std::string STR_CHECKBOX_LOWER = LoadStrFromResource(hInst, IDS_STR_CHECKBOX_LOWER);
+	std::string STR_CHECKBOX_UPPER = LoadStrFromResource(hInst, IDS_STR_CHECKBOX_UPPER);
+	std::string STR_CHECKBOX_DIGITS = LoadStrFromResource(hInst, IDS_STR_CHECKBOX_DIGITS);
+	std::string STR_CHECKBOX_SPECIAL = LoadStrFromResource(hInst, IDS_STR_CHECKBOX_SPECIAL);
+
+	std::string STR_BUTTON_GENERATE = LoadStrFromResource(hInst, IDS_STR_BUTTON_GENERATE);
+	std::string STR_BUTTON_COPY = LoadStrFromResource(hInst, IDS_STR_BUTTON_COPY);
+	std::string STR_BUTTON_INFO = LoadStrFromResource(hInst, IDS_STR_BUTTON_INFO);
+	
+	ctlGroupboxSettings = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_GROUPBOX_SETTINGS.c_str(), WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 10, 10, 350, 170, hwnd, (HMENU)0, NULL, NULL);
+
+	ctlLabelNumber = CreateWindowEx	(0, TEXT_CLASS_LABEL, STR_EMPTY.c_str(), WS_CHILD | WS_VISIBLE, 20, 40, 250, 16, hwnd, (HMENU)ID_LABEL_NUMBER, 0,	NULL);
+	
+	ctlTrackBarNumber = CreateWindowEx(0, TRACKBAR_CLASS, STR_EMPTY.c_str(), WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | WS_TABSTOP, 12, 60, 346, 40, hwnd, (HMENU)ID_TRACKBAR_NUMBER, 0, NULL);
 
 	SendMessage(ctlTrackBarNumber, TBM_SETRANGE,  TRUE, MAKELONG(RANGE_MIN, RANGE_MAX)); 
 	SendMessage(ctlTrackBarNumber, TBM_SETTICFREQ, DEFAULT_TICFREQ, 0); 
 	SendMessage(ctlTrackBarNumber, TBM_SETPAGESIZE, 0,  DEFAULT_PAGESIZE); 
 	SendMessage(ctlTrackBarNumber, TBM_SETPOS, TRUE, number); 
 
-	ctlLabelSymbols = CreateWindowEx(0, TEXT("Static"), STR_LABEL_SYMBOLS, WS_CHILD | WS_VISIBLE, 20, 119, 250, 16, hwnd, (HMENU)ID_LABEL_SYMBOLS, 0, NULL);
+	ctlLabelSymbols = CreateWindowEx(0, TEXT_CLASS_LABEL, STR_LABEL_SYMBOLS.c_str(), WS_CHILD | WS_VISIBLE, 20, 119, 250, 16, hwnd, (HMENU)ID_LABEL_SYMBOLS, 0, NULL);
 
-	ctlCheckboxLower = CreateWindowEx(0, TEXT("BUTTON"), TEXT("a-z"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 20, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_LOWER, NULL, NULL);
-	ctlCheckboxUpper = CreateWindowEx(0, TEXT("BUTTON"), TEXT("A-Z"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 110, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_UPPER, NULL, NULL);
-	ctlCheckboxDigits = CreateWindowEx(0, TEXT("BUTTON"), TEXT("0-9"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 200, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_DIGITS, NULL, NULL);
-	ctlCheckboxSpecial = CreateWindowEx(0, TEXT("BUTTON"), TEXT("@#$"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 290, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_SPECIAL, NULL, NULL);
+	ctlCheckboxLower = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_CHECKBOX_LOWER.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 20, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_LOWER, NULL, NULL);
+	ctlCheckboxUpper = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_CHECKBOX_UPPER.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 110, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_UPPER, NULL, NULL);
+	ctlCheckboxDigits = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_CHECKBOX_DIGITS.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 200, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_DIGITS, NULL, NULL);
+	ctlCheckboxSpecial = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_CHECKBOX_SPECIAL.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 290, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_SPECIAL, NULL, NULL);
 	
 	SendMessage(ctlCheckboxLower, BM_SETCHECK, TRUE, 0); 
 	SendMessage(ctlCheckboxUpper, BM_SETCHECK, TRUE, 0); 
 	SendMessage(ctlCheckboxDigits, BM_SETCHECK, TRUE, 0); 
 	SendMessage(ctlCheckboxSpecial, BM_SETCHECK, TRUE, 0); 
 
-	ctlTextboxPassword = CreateWindowEx(WS_EX_CLIENTEDGE | WS_EX_RIGHT, TEXT("EDIT"), STR_EMPTY, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 10, 190, 350, 30, hwnd, (HMENU)ID_TEXTBOX_PASSWORD, NULL, NULL);
+	ctlTextboxPassword = CreateWindowEx(WS_EX_CLIENTEDGE | WS_EX_RIGHT, TEXT_CLASS_EDIT, STR_EMPTY.c_str(), WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 10, 190, 350, 30, hwnd, (HMENU)ID_TEXTBOX_PASSWORD, NULL, NULL);
 
-	ctlButtonCopy = CreateWindowEx(0, "BUTTON", STR_BUTTON_COPY, WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 130, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_COPY, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);     
+	ctlButtonGenerate = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_BUTTON_GENERATE.c_str(), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 250, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_GENERATE, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL); 
+	
+	ctlButtonCopy = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_BUTTON_COPY.c_str(), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 130, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_COPY, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);     
 
-	ctlButtonGenerate = CreateWindowEx(0, "BUTTON", STR_BUTTON_GENERATE, WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 250, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_GENERATE, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL); 
-
-	ctlButtonInfo = CreateWindowEx(0, "BUTTON", STR_BUTTON_INFO, WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 10, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_INFO, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL); 
+	ctlButtonInfo = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_BUTTON_INFO.c_str(), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 10, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_INFO, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL); 
 	
 	UpdateLabelNumber();
 	UpdateTextboxPassword();
@@ -132,15 +157,15 @@ void CreateControls(HWND hwnd)
 	CreateFontCustom(hFontBold, FW_BOLD, FONT_NORMAL);
 	CreateFontCustom(hFontMono, FW_NORMAL, FONT_MONO);
 	
-	UpdateFonts();		
+	UpdateFonts();
 	
-	SetFocus(ctlButtonGenerate);
+	SetFocus(ctlButtonGenerate);	
 }
 
 //=============================================================================
 void UpdateNumber() 
 {
-	number = SendMessage(ctlTrackBarNumber, TBM_GETPOS, 0, 0);	
+	number = SendMessage(ctlTrackBarNumber, TBM_GETPOS, 0, 0);
 }
 
 //=============================================================================
@@ -212,7 +237,7 @@ void UpdateFonts()
 //===================================================
 void UpdateFont(HWND& hControl, HFONT& hFont)
 {
-	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);	
+	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
 //===================================================
@@ -240,7 +265,7 @@ void CreateFontCustom(HFONT& hFontCustom, int fnWeight, LPCTSTR lpszFace)
 //=============================================================================
 void ShowInfo()
 {
-	MessageBox(NULL, STR_APP_ABOUT_TEXT, STR_APP_ABOUT, MB_OK | MB_ICONINFORMATION);	
+	MessageBox(NULL, STR_APP_ABOUT_TEXT.c_str(), STR_APP_ABOUT.c_str(), MB_OK | MB_ICONINFORMATION);	
 }
 
 //=============================================================================
@@ -253,38 +278,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_MAXIMIZEBOX);
 			break;
 
-		case WM_KEYDOWN:
-			if (wParam == VK_TAB)
-			{ 
-				//TODO: TabIndex
-			}
-			break;
-
 		case WM_HSCROLL:
 			UpdateNumber();
 			UpdateLabelNumber();
 
-			switch (LOWORD(wParam)) {
+			switch (LOWORD(wParam))
+			{
 				case SB_ENDSCROLL:
-				{
 					if (isTracking) {isTracking = false; break;}
 					UpdateTextboxPassword();  
 					break;
-				}
+				
 				case SB_THUMBTRACK:
-				{
 					UpdateTextboxPassword(); 
 					isTracking = true;
 					break;
-				}
 			}
 			break;
 
 		case WM_COMMAND:
 			if (HIWORD(wParam) == BN_CLICKED)
 			{
-				switch (LOWORD(wParam)) {
-					
+				switch (LOWORD(wParam)) 
+				{					
 					case ID_BUTTON_COPY:
 						ClipboardCopy(GetEditText(ctlTextboxPassword));
 						break;

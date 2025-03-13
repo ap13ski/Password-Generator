@@ -16,8 +16,12 @@
 //=============================================================================
 
 #define DEFAULT_NUMBER 12
+#define BUFFER_STR 512
 
 //=============================================================================
+HINSTANCE hInst;
+
+
 HWND ctlGroupboxSettings;
 HWND ctlTrackBarNumber;
 HWND ctlLabelNumber;
@@ -48,6 +52,7 @@ bool isTracking = false;
 
 //=============================================================================
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+std::string LoadStrFromResource(HINSTANCE hInstance, int strID);
 void CreateControls(HWND hwnd);
 void UpdateNumber();
 void UpdateLabelNumber();

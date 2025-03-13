@@ -1,3 +1,24 @@
 #include "resources.h"
 
 IDI_APP_ICON ICON "icon.ico"
+
+STRINGTABLE 
+BEGIN
+	IDS_STR_EMPTY ""
+	IDS_STR_APP_NAME "Password Generator"
+	IDS_STR_APP_ABOUT "About - Password Generator"
+	IDS_STR_ERROR_REG_CLASS "Error while registering a class instance.\nApplication will be terminated."
+	
+	IDS_STR_GROUPBOX_SETTINGS "Settings"
+	IDS_STR_LABEL_SYMBOLS "Characters included:"
+	IDS_STR_CHECKBOX_LOWER "a-z"
+	IDS_STR_CHECKBOX_UPPER "A-Z"
+	IDS_STR_CHECKBOX_DIGITS "0-9"
+	IDS_STR_CHECKBOX_SPECIAL "@#$"
+
+	IDS_STR_BUTTON_GENERATE "Generate"
+	IDS_STR_BUTTON_COPY "Copy"
+	IDS_STR_BUTTON_INFO "Info"
+	
+	IDS_STR_APP_ABOUT_TEXT "Password Generator 1.0 64-bit\n\n\nCreated by ap13ski\nhttps://github.com/ap13ski\nap13ski@gmail.com\n\nCompiled with MinGW-W64 12.0.0 64-bit\nhttps://www.mingw-w64.org\n\nPacked with UPX 4.2.4 64-bit\nhttps://upx.github.io\n"
+END
