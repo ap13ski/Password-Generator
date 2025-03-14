@@ -75,6 +75,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				if (IsWindow(itemNext))
 				{
 					SetFocus(itemNext);
+					continue;
 				}
 			}
 		}
