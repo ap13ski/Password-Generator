@@ -17,6 +17,7 @@
 
 #define DEFAULT_NUMBER 12
 #define BUFFER_STR 512
+#define BUFFER_NUM 30
 
 //=============================================================================
 HINSTANCE hInst;

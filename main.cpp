@@ -27,6 +27,7 @@ const char* FONT_MONO = "Courier New";
 
 std::string STR_APP_ABOUT = LoadStrFromResource(hInst, IDS_STR_APP_ABOUT);
 std::string STR_APP_ABOUT_TEXT = LoadStrFromResource(hInst, IDS_STR_APP_ABOUT_TEXT);
+std::string STR_LABEL_NUMBER_FORMATTED = LoadStrFromResource(hInst, IDS_STR_LABEL_NUMBER_FORMATTED);
 
 //=============================================================================
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -171,8 +172,8 @@ void UpdateNumber()
 //=============================================================================
 void UpdateLabelNumber() 
 {
-	char buffer[30]; 
-	wsprintf(buffer, TEXT("Characters count: %ld"), number);
+	char buffer[BUFFER_NUM]; 
+	wsprintf(buffer, STR_LABEL_NUMBER_FORMATTED.c_str(), number);
 	SetWindowText(ctlLabelNumber, buffer);	
 }
 
