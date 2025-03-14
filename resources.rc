@@ -29,6 +29,16 @@ BEGIN
 							"https://www.mingw-w64.org\n\n"
 							"Packed with UPX 4.2.4 64-bit\n"
 							"https://upx.github.io\n"
-							
+/*							
+	IDS_STR_APP_ABOUT_TEXT	"Password Generator 1.0 32-bit\n\n\n"
+							"Created by ap13ski\n"
+							"https://github.com/ap13ski\n"
+							"ap13ski@gmail.com\n\n"	
+							"Compiled with TDM-GCC 9.2.0 32-bit\n"
+							"https://jmeubank.github.io/tdm-gcc\n"
+							"https://sourceforge.net/projects/tdm-gcc\n\n"
+							"Packed with UPX 4.2.4 32-bit\n"
+							"https://upx.github.io\n"	
+*/							
 	IDS_STR_LABEL_NUMBER_FORMATTED "Characters count: %ld"
 END
