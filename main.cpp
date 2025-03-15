@@ -3,22 +3,22 @@
 
 //=============================================================================
 
-#define ID_TRACKBAR_NUMBER			1001
-#define ID_LABEL_NUMBER				1002
-#define ID_LABEL_SYMBOLS			1003
-#define ID_CHECKBOX_LOWER			1004
-#define ID_CHECKBOX_UPPER			1005
-#define ID_CHECKBOX_DIGITS			1006
-#define ID_CHECKBOX_SPECIAL			1007
-#define ID_TEXTBOX_PASSWORD			1008
-#define ID_BUTTON_GENERATE			1009
-#define ID_BUTTON_COPY				1010
-#define ID_BUTTON_INFO				1011
+#define ID_TRACKBAR_NUMBER		1001
+#define ID_LABEL_NUMBER			1002
+#define ID_LABEL_SYMBOLS		1003
+#define ID_CHECKBOX_LOWER		1004
+#define ID_CHECKBOX_UPPER		1005
+#define ID_CHECKBOX_DIGITS		1006
+#define ID_CHECKBOX_SPECIAL		1007
+#define ID_TEXTBOX_PASSWORD		1008
+#define ID_BUTTON_GENERATE		1009
+#define ID_BUTTON_COPY			1010
+#define ID_BUTTON_INFO			1011
 
-#define RANGE_MIN 			5
-#define RANGE_MAX 			30
-#define DEFAULT_TICFREQ 	1
-#define DEFAULT_PAGESIZE 	1
+#define RANGE_MIN				5
+#define RANGE_MAX				30
+#define DEFAULT_TICFREQ 		1
+#define DEFAULT_PAGESIZE 		1
 
 //=============================================================================
 
@@ -43,23 +43,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wndmain.cbSize = sizeof(WNDCLASSEX);
 	wndmain.style = 0;
 	wndmain.lpfnWndProc = WndProc;
-    wndmain.cbClsExtra = 0;
-    wndmain.cbWndExtra = 0;
-    wndmain.hInstance = hInstance;
-    wndmain.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
-    wndmain.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wndmain.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
-    wndmain.lpszMenuName = NULL;
-    wndmain.lpszClassName = STR_APP_NAME.c_str();
+	wndmain.cbClsExtra = 0;
+	wndmain.cbWndExtra = 0;
+	wndmain.hInstance = hInstance;
+	wndmain.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
+	wndmain.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndmain.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
+	wndmain.lpszMenuName = NULL;
+	wndmain.lpszClassName = STR_APP_NAME.c_str();
 	wndmain.hIconSm = NULL;
 
-    if (!RegisterClassEx(&wndmain))
+	if (!RegisterClassEx(&wndmain))
 	{
 		MessageBox(NULL, STR_ERROR_REG_CLASS.c_str(), STR_APP_NAME.c_str(), MB_ICONERROR);
 		return 0;
-    }
+	}
 
-	hwnd = CreateWindowEx(0, wndmain.lpszClassName, STR_APP_NAME.c_str(), WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 380, 300, 0, NULL, hInstance, NULL);	
+	hwnd = CreateWindowEx(0, wndmain.lpszClassName, STR_APP_NAME.c_str(), WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 380, 300, 0, NULL, hInstance, NULL);
 
 	while (GetMessage(&msg, NULL, 0, 0)) 
 	{
@@ -94,7 +94,7 @@ std::string LoadStrFromResource(HINSTANCE hInstance, int strID)
 	char buffer[BUFFER_STR];
 	LoadString(hInstance, strID, buffer, sizeof(buffer) / sizeof(char));
 	
-	std::string result = buffer;	
+	std::string result = buffer;
 	return result;
 }
 
@@ -127,10 +127,10 @@ void CreateControls(HWND hwnd)
 	
 	ctlTrackBarNumber = CreateWindowEx(0, TRACKBAR_CLASS, STR_EMPTY.c_str(), WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | WS_TABSTOP, 12, 60, 346, 40, hwnd, (HMENU)ID_TRACKBAR_NUMBER, 0, NULL);
 
-	SendMessage(ctlTrackBarNumber, TBM_SETRANGE,  TRUE, MAKELONG(RANGE_MIN, RANGE_MAX)); 
-	SendMessage(ctlTrackBarNumber, TBM_SETTICFREQ, DEFAULT_TICFREQ, 0); 
-	SendMessage(ctlTrackBarNumber, TBM_SETPAGESIZE, 0,  DEFAULT_PAGESIZE); 
-	SendMessage(ctlTrackBarNumber, TBM_SETPOS, TRUE, number); 
+	SendMessage(ctlTrackBarNumber, TBM_SETRANGE,  TRUE, MAKELONG(RANGE_MIN, RANGE_MAX));
+	SendMessage(ctlTrackBarNumber, TBM_SETTICFREQ, DEFAULT_TICFREQ, 0);
+	SendMessage(ctlTrackBarNumber, TBM_SETPAGESIZE, 0,  DEFAULT_PAGESIZE);
+	SendMessage(ctlTrackBarNumber, TBM_SETPOS, TRUE, number);
 
 	ctlLabelSymbols = CreateWindowEx(0, TEXT_CLASS_LABEL, STR_LABEL_SYMBOLS.c_str(), WS_CHILD | WS_VISIBLE, 20, 119, 250, 16, hwnd, (HMENU)ID_LABEL_SYMBOLS, 0, NULL);
 
@@ -139,18 +139,18 @@ void CreateControls(HWND hwnd)
 	ctlCheckboxDigits = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_CHECKBOX_DIGITS.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 200, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_DIGITS, NULL, NULL);
 	ctlCheckboxSpecial = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_CHECKBOX_SPECIAL.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 290, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_SPECIAL, NULL, NULL);
 	
-	SendMessage(ctlCheckboxLower, BM_SETCHECK, TRUE, 0); 
-	SendMessage(ctlCheckboxUpper, BM_SETCHECK, TRUE, 0); 
-	SendMessage(ctlCheckboxDigits, BM_SETCHECK, TRUE, 0); 
-	SendMessage(ctlCheckboxSpecial, BM_SETCHECK, TRUE, 0); 
+	SendMessage(ctlCheckboxLower, BM_SETCHECK, TRUE, 0);
+	SendMessage(ctlCheckboxUpper, BM_SETCHECK, TRUE, 0);
+	SendMessage(ctlCheckboxDigits, BM_SETCHECK, TRUE, 0);
+	SendMessage(ctlCheckboxSpecial, BM_SETCHECK, TRUE, 0);
 
 	ctlTextboxPassword = CreateWindowEx(WS_EX_CLIENTEDGE | WS_EX_RIGHT, TEXT_CLASS_EDIT, STR_EMPTY.c_str(), WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 10, 190, 350, 30, hwnd, (HMENU)ID_TEXTBOX_PASSWORD, NULL, NULL);
 
-	ctlButtonGenerate = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_BUTTON_GENERATE.c_str(), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 250, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_GENERATE, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL); 
+	ctlButtonGenerate = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_BUTTON_GENERATE.c_str(), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 250, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_GENERATE, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
 	
-	ctlButtonCopy = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_BUTTON_COPY.c_str(), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 130, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_COPY, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);     
+	ctlButtonCopy = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_BUTTON_COPY.c_str(), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 130, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_COPY, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
 
-	ctlButtonInfo = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_BUTTON_INFO.c_str(), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 10, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_INFO, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL); 
+	ctlButtonInfo = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_BUTTON_INFO.c_str(), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_TABSTOP, 10, 230, 110, 30, hwnd, (HMENU)ID_BUTTON_INFO, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
 	
 	UpdateLabelNumber();
 	UpdateTextboxPassword();
@@ -173,14 +173,14 @@ void UpdateNumber()
 //=============================================================================
 void UpdateLabelNumber() 
 {
-	char buffer[BUFFER_NUM]; 
+	char buffer[BUFFER_NUM];
 	wsprintf(buffer, STR_LABEL_NUMBER_FORMATTED.c_str(), number);
-	SetWindowText(ctlLabelNumber, buffer);	
+	SetWindowText(ctlLabelNumber, buffer);
 }
 
 //=============================================================================
 std::string Generate(int number, bool isCheckboxLower, bool isCheckboxUpper, bool isCheckboxDigits, bool isCheckboxSpecial)
-{	
+{
 	std::string password = pGenerator.GenerateNewPassword(number, isCheckboxLower, isCheckboxUpper, isCheckboxDigits, isCheckboxSpecial);
 	return password;
 }
@@ -210,13 +210,13 @@ bool ClipboardCopy(const std::string& str)
 //=============================================================================
 std::string GetEditText(HWND hEdit)
 {
-    int length = GetWindowTextLength(hEdit);
-    if (length <= 0) { return ""; }
+	int length = GetWindowTextLength(hEdit);
+	if (length <= 0) { return ""; }
 
-    std::string text(length, '\0');
-    GetWindowText(hEdit, &text[0], length + 1);
+	std::string text(length, '\0');
+	GetWindowText(hEdit, &text[0], length + 1);
 
-    return text;
+	return text;
 }
 
 //===================================================
@@ -247,27 +247,27 @@ void CreateFontCustom(HFONT& hFontCustom, int fnWeight, LPCTSTR lpszFace)
 {
 	hFontCustom = CreateFont
 	(
-		0, 							// int nHeight               // height of font
-		0, 							// int nWidth                // average character width
-		0, 							// int nEscapement           // angle of escapement
-		0, 							// int nOrientation          // base-line orientation angle
-		fnWeight, 					// int fnWeight              // font weight
-		FALSE, 						// DWORD fdwItalic           // italic attribute option
-		FALSE, 						// DWORD fdwUnderline        // underline attribute option
-		FALSE, 						// DWORD fdwStrikeOut        // strikeout attribute option
-		DEFAULT_CHARSET, 			// DWORD fdwCharSet          // character set identifier
-		OUT_DEFAULT_PRECIS, 		// DWORD fdwOutputPrecision  // output precision
-		CLIP_DEFAULT_PRECIS, 		// DWORD fdwClipPrecision    // clipping precision
-		DEFAULT_QUALITY, 			// DWORD fdwQuality          // output quality
-		DEFAULT_PITCH | FF_SWISS, 	// DWORD fdwPitchAndFamily   // pitch and family
-		lpszFace			 		// LPCTSTR lpszFace          // typeface name
+		0,							// int nHeight				// height of font
+		0,							// int nWidth				// average character width
+		0,							// int nEscapement			// angle of escapement
+		0,							// int nOrientation			// base-line orientation angle
+		fnWeight,					// int fnWeight				// font weight
+		FALSE,						// DWORD fdwItalic			// italic attribute option
+		FALSE,						// DWORD fdwUnderline		// underline attribute option
+		FALSE,						// DWORD fdwStrikeOut		// strikeout attribute option
+		DEFAULT_CHARSET,			// DWORD fdwCharSet			// character set identifier
+		OUT_DEFAULT_PRECIS,			// DWORD fdwOutputPrecision	// output precision
+		CLIP_DEFAULT_PRECIS,		// DWORD fdwClipPrecision	// clipping precision
+		DEFAULT_QUALITY,			// DWORD fdwQuality			// output quality
+		DEFAULT_PITCH | FF_SWISS,	// DWORD fdwPitchAndFamily	// pitch and family
+		lpszFace					// LPCTSTR lpszFace			// typeface name
 	);
 }
 
 //=============================================================================
 void ShowInfo()
 {
-	MessageBox(NULL, STR_APP_ABOUT_TEXT.c_str(), STR_APP_ABOUT.c_str(), MB_OK | MB_ICONINFORMATION);	
+	MessageBox(NULL, STR_APP_ABOUT_TEXT.c_str(), STR_APP_ABOUT.c_str(), MB_OK | MB_ICONINFORMATION);
 }
 
 //=============================================================================
@@ -301,8 +301,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_COMMAND:
 			if (HIWORD(wParam) == BN_CLICKED)
 			{
-				switch (LOWORD(wParam)) 
-				{					
+				switch (LOWORD(wParam))
+				{
 					case ID_BUTTON_COPY:
 						ClipboardCopy(GetEditText(ctlTextboxPassword));
 						break;
@@ -313,27 +313,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 					case ID_BUTTON_INFO:
 						ShowInfo();
-						break;	
+						break;
 					
 					case ID_CHECKBOX_LOWER:
 						isCheckboxLower = GetCheckboxState(hwnd, ID_CHECKBOX_LOWER);
-						UpdateTextboxPassword();						
-						break;	
+						UpdateTextboxPassword();
+						break;
 					
 					case ID_CHECKBOX_UPPER:
 						isCheckboxUpper = GetCheckboxState(hwnd, ID_CHECKBOX_UPPER);
 						UpdateTextboxPassword();
-						break;	
+						break;
 					
 					case ID_CHECKBOX_DIGITS:
 						isCheckboxDigits = GetCheckboxState(hwnd, ID_CHECKBOX_DIGITS);
 						UpdateTextboxPassword();
-						break;	
+						break;
 					
 					case ID_CHECKBOX_SPECIAL:
 						isCheckboxSpecial = GetCheckboxState(hwnd, ID_CHECKBOX_SPECIAL);
 						UpdateTextboxPassword();
-						break;					
+						break;
 				}
 			}
 			break;

@@ -12,8 +12,8 @@ namespace NS_CLIPBOARD
 	class Clipboard
 	{
 		public:
-		bool SetData(const std::string& str);		
-	};	
+		bool SetData(const std::string& str);
+	};
 	//===================================================
 }
 

@@ -11,8 +11,6 @@
 
 #include "resources.h"
 
-#pragma comment(lib, "comctl32.lib")
-
 //=============================================================================
 
 #define DEFAULT_NUMBER 12
@@ -21,7 +19,6 @@
 
 //=============================================================================
 HINSTANCE hInst;
-
 
 HWND ctlGroupboxSettings;
 HWND ctlTrackBarNumber;

@@ -8,12 +8,12 @@ namespace NS_CLIPBOARD
 	{
 		const char* data = str.c_str();
 		size_t size = (str.length() + 1) * sizeof(char);
-	  
+
 		HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, size);
 		if (hMem == NULL)
 		{
 			return false;
-		}  
+		}
 
 		char* pMem = static_cast<char*>(GlobalLock(hMem));
 		if (!pMem)

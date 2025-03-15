@@ -10,7 +10,7 @@
 namespace NS_PASSWORD
 {
 //=============================================================================
-	class PasswordGenerator 
+	class PasswordGenerator
 	{
 	private:
 		
@@ -24,13 +24,13 @@ namespace NS_PASSWORD
 		std::string strUpper;
 		std::string strDigits;
 		std::string strSpecial;
-		
-		std::string GetSequence(bool isLower, bool isUpper, bool isDigits, bool isSpecial);	
+
+		std::string GetSequence(bool isLower, bool isUpper, bool isDigits, bool isSpecial);
 		
 	public:
 
-		std::string GenerateNewPassword(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial);	
-		std::string GenerateNewPassword();	
+		std::string GenerateNewPassword(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial);
+		std::string GenerateNewPassword();
 		PasswordGenerator(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial);
 	};
 
