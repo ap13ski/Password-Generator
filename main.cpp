@@ -19,6 +19,7 @@
 #define RANGE_MAX				30
 #define DEFAULT_TICFREQ 		1
 #define DEFAULT_PAGESIZE 		1
+#define DEFAULT_FONTSIZE 		20
 
 //=============================================================================
 
@@ -123,7 +124,7 @@ void CreateControls(HWND hwnd)
 	
 	ctlGroupboxSettings = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_GROUPBOX_SETTINGS.c_str(), WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 10, 10, 350, 170, hwnd, (HMENU)0, NULL, NULL);
 
-	ctlLabelNumber = CreateWindowEx	(0, TEXT_CLASS_LABEL, STR_EMPTY.c_str(), WS_CHILD | WS_VISIBLE, 20, 40, 250, 16, hwnd, (HMENU)ID_LABEL_NUMBER, 0,	NULL);
+	ctlLabelNumber = CreateWindowEx	(0, TEXT_CLASS_LABEL, STR_EMPTY.c_str(), WS_CHILD | WS_VISIBLE, 20, 40, 250, 20, hwnd, (HMENU)ID_LABEL_NUMBER, 0,	NULL);
 	
 	ctlTrackBarNumber = CreateWindowEx(0, TRACKBAR_CLASS, STR_EMPTY.c_str(), WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | WS_TABSTOP, 12, 60, 346, 40, hwnd, (HMENU)ID_TRACKBAR_NUMBER, 0, NULL);
 
@@ -132,7 +133,7 @@ void CreateControls(HWND hwnd)
 	SendMessage(ctlTrackBarNumber, TBM_SETPAGESIZE, 0,  DEFAULT_PAGESIZE);
 	SendMessage(ctlTrackBarNumber, TBM_SETPOS, TRUE, number);
 
-	ctlLabelSymbols = CreateWindowEx(0, TEXT_CLASS_LABEL, STR_LABEL_SYMBOLS.c_str(), WS_CHILD | WS_VISIBLE, 20, 119, 250, 16, hwnd, (HMENU)ID_LABEL_SYMBOLS, 0, NULL);
+	ctlLabelSymbols = CreateWindowEx(0, TEXT_CLASS_LABEL, STR_LABEL_SYMBOLS.c_str(), WS_CHILD | WS_VISIBLE, 20, 119, 250, 20, hwnd, (HMENU)ID_LABEL_SYMBOLS, 0, NULL);
 
 	ctlCheckboxLower = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_CHECKBOX_LOWER.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 20, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_LOWER, NULL, NULL);
 	ctlCheckboxUpper = CreateWindowEx(0, TEXT_CLASS_BUTTON, STR_CHECKBOX_UPPER.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 110, 140, 60, 30, hwnd, (HMENU)ID_CHECKBOX_UPPER, NULL, NULL);
@@ -247,7 +248,7 @@ void CreateFontCustom(HFONT& hFontCustom, int fnWeight, LPCTSTR lpszFace)
 {
 	hFontCustom = CreateFont
 	(
-		0,							// int nHeight				// height of font
+		DEFAULT_FONTSIZE,			// int nHeight				// height of font
 		0,							// int nWidth				// average character width
 		0,							// int nEscapement			// angle of escapement
 		0,							// int nOrientation			// base-line orientation angle
