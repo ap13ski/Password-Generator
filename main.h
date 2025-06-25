@@ -40,17 +40,17 @@ HFONT hFontMono;
 NS_CLIPBOARD::Clipboard clipboard;
 
 int number = DEFAULT_NUMBER;
-bool isCheckboxLower = true;
-bool isCheckboxUpper = true;
-bool isCheckboxDigits = true;
-bool isCheckboxSpecial = true;
-NS_PASSWORD::PasswordGenerator pGenerator(number, isCheckboxLower, isCheckboxUpper, isCheckboxDigits, isCheckboxSpecial);
+bool is_checkbox_lower = true;
+bool is_checkbox_upper = true;
+bool is_checkbox_digits = true;
+bool is_checkbox_special = true;
+NS_PASSWORD::PasswordGenerator pGenerator(number, is_checkbox_lower, is_checkbox_upper, is_checkbox_digits, is_checkbox_special);
 
-bool isTracking = false;
+bool is_tracking = false;
 
 //=============================================================================
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-std::string LoadStrFromResource(HINSTANCE hInstance, int strID);
+std::string LoadStrFromResource(HINSTANCE hInstance, int str_id);
 void CreateControls(HWND hwnd);
 void UpdateNumber();
 void UpdateLabelNumber();
@@ -61,9 +61,9 @@ void UpdateFonts();
 
 void UpdateTextboxPassword();
 
-bool GetCheckboxState(HWND hwnd, int buttonID);
+bool GetCheckboxState(HWND hwnd, int button_id);
 bool ClipboardCopy(const std::string& str);
-std::string Generate(int number, bool isCheckboxLower, bool isCheckboxUpper, bool isCheckboxDigits, bool isCheckboxSpecial);
+std::string Generate(int number, bool is_checkbox_lower, bool is_checkbox_upper, bool is_checkbox_digits, bool is_checkbox_special);
 std::string GetEditText(HWND hEdit);
 
 void ShowInfo();

@@ -15,23 +15,23 @@ namespace NS_PASSWORD
 	private:
 		
 		int number;
-		bool isLower;
-		bool isUpper;
-		bool isDigits;
-		bool isSpecial;
+		bool is_lower;
+		bool is_upper;
+		bool is_digits;
+		bool is_special;
 
-		std::string strLower;
-		std::string strUpper;
-		std::string strDigits;
-		std::string strSpecial;
+		std::string str_lower;
+		std::string str_upper;
+		std::string str_digits;
+		std::string str_special;
 
-		std::string GetSequence(bool isLower, bool isUpper, bool isDigits, bool isSpecial);
+		std::string GetSequence(bool is_lower, bool is_upper, bool is_digits, bool is_special);
 		
 	public:
 
-		std::string GenerateNewPassword(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial);
+		std::string GenerateNewPassword(int number, bool is_lower, bool is_upper, bool is_digits, bool is_special);
 		std::string GenerateNewPassword();
-		PasswordGenerator(int number, bool isLower, bool isUpper, bool isDigits, bool isSpecial);
+		PasswordGenerator(int number, bool is_lower, bool is_upper, bool is_digits, bool is_special);
 	};
 
 //=============================================================================

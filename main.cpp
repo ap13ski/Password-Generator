@@ -70,12 +70,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		{
 			if (msg.wParam == VK_TAB)
 			{
-				BOOL isDirBackward = GetAsyncKeyState(VK_SHIFT) & 0x8000;
+				BOOL is_dir_backward = GetAsyncKeyState(VK_SHIFT) & 0x8000;
 				
-				HWND itemNext = GetNextDlgTabItem(hwnd, GetFocus(), isDirBackward);
-				if (IsWindow(itemNext))
+				HWND item_next = GetNextDlgTabItem(hwnd, GetFocus(), is_dir_backward);
+				if (IsWindow(item_next))
 				{
-					SetFocus(itemNext);
+					SetFocus(item_next);
 					continue;
 				}
 			}
@@ -90,10 +90,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 //=============================================================================
-std::string LoadStrFromResource(HINSTANCE hInstance, int strID)
+std::string LoadStrFromResource(HINSTANCE hInstance, int str_id)
 {
 	char buffer[BUFFER_STR];
-	LoadString(hInstance, strID, buffer, sizeof(buffer) / sizeof(char));
+	LoadString(hInstance, str_id, buffer, sizeof(buffer) / sizeof(char));
 	
 	std::string result = buffer;
 	return result;
@@ -180,23 +180,23 @@ void UpdateLabelNumber()
 }
 
 //=============================================================================
-std::string Generate(int number, bool isCheckboxLower, bool isCheckboxUpper, bool isCheckboxDigits, bool isCheckboxSpecial)
+std::string Generate(int number, bool is_checkbox_lower, bool is_checkbox_upper, bool is_checkbox_digits, bool is_checkbox_special)
 {
-	std::string password = pGenerator.GenerateNewPassword(number, isCheckboxLower, isCheckboxUpper, isCheckboxDigits, isCheckboxSpecial);
+	std::string password = pGenerator.GenerateNewPassword(number, is_checkbox_lower, is_checkbox_upper, is_checkbox_digits, is_checkbox_special);
 	return password;
 }
 
 //=============================================================================
 void UpdateTextboxPassword()
 {
-	std::string password = Generate(number, isCheckboxLower, isCheckboxUpper, isCheckboxDigits, isCheckboxSpecial);
+	std::string password = Generate(number, is_checkbox_lower, is_checkbox_upper, is_checkbox_digits, is_checkbox_special);
 	SetWindowText(ctlTextboxPassword, password.c_str());
 }
 
 //=============================================================================
-bool GetCheckboxState(HWND hwnd, int buttonID)
+bool GetCheckboxState(HWND hwnd, int button_id)
 {
-	return (IsDlgButtonChecked(hwnd, buttonID) == BST_CHECKED);
+	return (IsDlgButtonChecked(hwnd, button_id) == BST_CHECKED);
 }
 
 //=============================================================================
@@ -288,13 +288,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			switch (LOWORD(wParam))
 			{
 				case SB_ENDSCROLL:
-					if (isTracking) {isTracking = false; break;}
+					if (is_tracking) {is_tracking = false; break;}
 					UpdateTextboxPassword();  
 					break;
 				
 				case SB_THUMBTRACK:
 					UpdateTextboxPassword(); 
-					isTracking = true;
+					is_tracking = true;
 					break;
 			}
 			break;
@@ -317,22 +317,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						break;
 					
 					case ID_CHECKBOX_LOWER:
-						isCheckboxLower = GetCheckboxState(hwnd, ID_CHECKBOX_LOWER);
+						is_checkbox_lower = GetCheckboxState(hwnd, ID_CHECKBOX_LOWER);
 						UpdateTextboxPassword();
 						break;
 					
 					case ID_CHECKBOX_UPPER:
-						isCheckboxUpper = GetCheckboxState(hwnd, ID_CHECKBOX_UPPER);
+						is_checkbox_upper = GetCheckboxState(hwnd, ID_CHECKBOX_UPPER);
 						UpdateTextboxPassword();
 						break;
 					
 					case ID_CHECKBOX_DIGITS:
-						isCheckboxDigits = GetCheckboxState(hwnd, ID_CHECKBOX_DIGITS);
+						is_checkbox_digits = GetCheckboxState(hwnd, ID_CHECKBOX_DIGITS);
 						UpdateTextboxPassword();
 						break;
 					
 					case ID_CHECKBOX_SPECIAL:
-						isCheckboxSpecial = GetCheckboxState(hwnd, ID_CHECKBOX_SPECIAL);
+						is_checkbox_special = GetCheckboxState(hwnd, ID_CHECKBOX_SPECIAL);
 						UpdateTextboxPassword();
 						break;
 				}
